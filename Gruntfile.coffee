@@ -25,8 +25,8 @@ module.exports = (grunt) ->
 				dest: 'js/wrapped/'
 				wrapper: (filepath) ->
 					
-					unless filepath.match /^js\/(Initialize|Main)\.js$/
-						moduleName = filepath.substr 3
+					unless filepath.match /^js\/scripts\/(Initialize|Main)\.js$/
+						moduleName = filepath.substr 11
 						dirname = path.dirname moduleName
 						extname = path.extname moduleName
 						moduleName = path.join dirname, path.basename moduleName, extname 

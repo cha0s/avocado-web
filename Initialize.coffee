@@ -19,22 +19,16 @@ window.require = require = (name) ->
 
 # Hack in the SPIIs.
 Core = requires_['Core'] = module: exports:
-	CoreService: require 'main/web/Bindings/CoreService'
+	CoreService: require 'SPI/CoreService'
 	
 Graphics = requires_['Graphics'] = module: exports:
-	GraphicsService: require 'main/web/Bindings/GraphicsService'
-	Font: require 'main/web/Bindings/Font'
-	Image: require 'main/web/Bindings/Image'
-	Window: require 'main/web/Bindings/Window'
+	GraphicsService: require 'SPI/GraphicsService'
 	
 Sound = requires_['Sound'] = module: exports:
-	SoundService: require 'main/web/Bindings/SoundService'
-	Music: require 'main/web/Bindings/Music'
-	Sample: require 'main/web/Bindings/Sample'
+	SoundService: require 'SPI/SoundService'
 	
 Timing = requires_['Timing'] = module: exports:
-	TimingService: require 'main/web/Bindings/TimingService'
-	Counter: require 'main/web/Bindings/Counter'
+	TimingService: require 'SPI/TimingService'
 	
 Timing['%setTimeout'] = setTimeout
 Timing['%setInterval'] = setInterval

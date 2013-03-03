@@ -1,3 +1,6 @@
 module.exports = TimingService = class
 
-TimingService['%sleep'] = (ms) ->
+	close: ->
+
+	'%sleep': (ms) ->
+	

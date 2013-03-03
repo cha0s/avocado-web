@@ -1,9 +1,8 @@
 upon = require 'core/Utility/upon'
 
 module.exports = CoreService = class
-
-CoreService.EnginePath = '/engine'
-CoreService.ResourcePath = '/resource'
+	
+	close: ->
 
 CoreService['%writeStderr'] = ->
 	

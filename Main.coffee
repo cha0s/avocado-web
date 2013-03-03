@@ -4,20 +4,25 @@
 
 Config = require 'Config'
 
+Config.coreSpi = 'HTML5'
+Config.graphicsSpi = 'HTML5'
+Config.soundSpi = 'HTML5'
+Config.timingSpi = 'HTML5'
+
 Core = require 'Core'
-#Core.CoreService.implementSpi Config.coreSpi
+Core.CoreService.implementSpi Config.coreSpi
 Core.coreService = new Core.CoreService()
 
 Graphics = require 'Graphics'
-#Graphics.GraphicsService.implementSpi Config.graphicsSpi
+Graphics.GraphicsService.implementSpi Config.graphicsSpi
 Graphics.graphicsService = new Graphics.GraphicsService()
 
 Sound = require 'Sound'
-#Sound.SoundService.implementSpi Config.soundSpi
+Sound.SoundService.implementSpi Config.soundSpi
 Sound.soundService = new Sound.SoundService()
 
 Timing = require 'Timing'
-#Timing.TimingService.implementSpi Config.timingSpi
+Timing.TimingService.implementSpi Config.timingSpi
 Timing.timingService = new Timing.TimingService()
 Timing.ticksPerSecondTarget = Config.ticksPerSecondTarget
 Timing.rendersPerSecondTarget = Config.rendersPerSecondTarget
