@@ -1,6 +1,4 @@
 
-requires_ = {}
-
 # Implement require in the spirit of NodeJS.
 window.require = require = (name) ->
 	
@@ -30,7 +28,7 @@ Sound = requires_['Sound'] = module: exports:
 Timing = requires_['Timing'] = module: exports:
 	TimingService: require 'SPI/TimingService'
 	
-Timing['%setTimeout'] = setTimeout
-Timing['%setInterval'] = setInterval
-Timing['%clearTimeout'] = clearTimeout
-Timing['%clearInterval'] = clearInterval
+	'%setTimeout': setTimeout
+	'%setInterval': setInterval
+	'%clearTimeout': clearTimeout
+	'%clearInterval': clearInterval

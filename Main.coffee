@@ -28,8 +28,7 @@ Timing.ticksPerSecondTarget = Config.ticksPerSecondTarget
 Timing.rendersPerSecondTarget = Config.rendersPerSecondTarget
 
 # SPI proxies.
-require 'core/proxySpiis'
-
+require 'proxySpiis'
 timeCounter = new Timing.Counter()
 
 Main = class extends (require 'Main')
@@ -47,6 +46,13 @@ Main = class extends (require 'Main')
 		super
 		
 main = new Main
+
+main.on 'stateInitialized', (name) ->
+	
+	if name is 'Initial'
+		
+		document.body.appendChild Graphics.window.window_.Canvas
+		Graphics.window.window_.calculateOffset()
 
 # Log and exit on error.
 main.on 'error', (error) ->

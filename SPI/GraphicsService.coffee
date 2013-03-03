@@ -4,11 +4,12 @@ currentSpi = ''
 module.exports = ->
 	
 	new (require "SPI/#{currentSpi}/Graphics/GraphicsService")
-
+	
 module.exports.implementSpi = (name) ->
 	currentSpi = name
 	
 	Graphics = require 'Graphics'
+	Graphics.Font = require "SPI/#{currentSpi}/Graphics/Font"
 	Graphics.Image = require "SPI/#{currentSpi}/Graphics/Image"
 	Graphics.Window = require "SPI/#{currentSpi}/Graphics/Window"
 

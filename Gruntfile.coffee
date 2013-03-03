@@ -36,6 +36,11 @@ module.exports = (grunt) ->
 					else
 						['', '']
 		
+		concat:
+			self:
+				src: ['js/wrapped/js/scripts/SPI/**/*.js']
+				dest: 'js/avocado-web.js'
+		
 		uglify:
 			options:
 				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -46,8 +51,9 @@ module.exports = (grunt) ->
 				dest: 'build/<%= pkg.name %>.min.js'
 				
 	grunt.loadNpmTasks 'grunt-contrib-coffee'
+	grunt.loadNpmTasks 'grunt-contrib-concat'
 	grunt.loadNpmTasks 'grunt-contrib-copy'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-wrap'
 	
-	grunt.registerTask 'default', ['coffee', 'wrap']
+	grunt.registerTask 'default', ['coffee', 'wrap', 'concat']

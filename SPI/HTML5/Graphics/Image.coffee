@@ -1,8 +1,7 @@
 
-CoreService = require 'main/web/Bindings/CoreService'
-Rectangle = require 'core/Extension/Rectangle'
-Vector = require 'core/Extension/Vector'
-upon = require 'core/Utility/upon'
+Rectangle = require 'Extension/Rectangle'
+Vector = require 'Extension/Vector'
+upon = require 'Utility/upon'
 
 Images = {}
 module.exports = AvoImage = class
@@ -21,6 +20,8 @@ module.exports = AvoImage = class
 			@Canvas.height = height
 	
 	@['%load'] = (uri, fn) ->
+		
+		CoreService = require('Core').CoreService
 		
 		defer = upon.defer()
 		
@@ -78,8 +79,10 @@ module.exports = AvoImage = class
 		context.beginPath();
 		context.arc position[0], position[1], radius, 0, 2*Math.PI
 		
-		context.fillStyle = context.strokeStyle = rgbToHex r, g, b, a
+		context.fillStyle = rgbToHex r, g, b, a
 		context.fill()
+		
+		context.strokeStyle = rgbToHex r, g, b, a
 		context.stroke()
 	
 		context.globalAlpha = oldAlpha
@@ -133,18 +136,18 @@ module.exports = AvoImage = class
 		
 		# HACK!
 		if a > 0
-		
+			
 			oldAlpha = context.globalAlpha
 			context.globalAlpha = a / 255
 			
-			context.rect 0, 0, @width(), @height()
 			context.fillStyle = rgbToHex r, g, b, a
-			context.fill()
+			context.fillRect 0, 0, @width(), @height()
 			
 			context.globalAlpha = oldAlpha
 		
 		else
-			context.clearRect(0, 0, @width(), @height())
+			
+			context.clearRect 0, 0, @width(), @height()
 	
 	'%width': -> @Canvas.width
 	
@@ -178,8 +181,8 @@ module.exports = AvoImage = class
 		
 		context.globalAlpha = alpha / 255
 		
-		sourceRect = Rectangle.copy sourceRect
-		position = Vector.copy position
+		sourceRect = Rectangle.round sourceRect
+		position = Vector.round position
 		
 		sourceRect[0] = 0 if sourceRect[0] < 0
 		sourceRect[1] = 0 if sourceRect[1] < 0

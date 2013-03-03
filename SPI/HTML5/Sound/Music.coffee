@@ -1,7 +1,7 @@
 
-Sound = require 'main/web/Bindings/Sound'
+Sound = require 'SPI/HTML5/Sound/Sound'
 TimingService = require('Timing').TimingService
-upon = require 'core/Utility/upon'
+upon = require 'Utility/upon'
 
 module.exports = class extends Sound
 

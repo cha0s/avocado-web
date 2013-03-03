@@ -1,6 +1,6 @@
 
-Sound = require 'main/web/Bindings/Sound'
-upon = require 'core/Utility/upon'
+Sound = require 'SPI/HTML5/Sound/Sound'
+upon = require 'Utility/upon'
 
 module.exports = class extends Sound
 	

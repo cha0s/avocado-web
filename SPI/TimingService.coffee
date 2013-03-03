@@ -9,6 +9,7 @@ module.exports.implementSpi = (name) ->
 	currentSpi = name
 	
 	Timing = require 'Timing'
+	
 	Timing.Counter = require "SPI/#{currentSpi}/Timing/Counter"
 
 	Service = require "SPI/#{currentSpi}/Timing/TimingService"

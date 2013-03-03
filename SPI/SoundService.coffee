@@ -9,8 +9,8 @@ module.exports.implementSpi = (name) ->
 	currentSpi = name
 	
 	Sound = require 'Sound'
-	Sound.Image = require "SPI/#{currentSpi}/Sound/Music"
-	Sound.Window = require "SPI/#{currentSpi}/Sound/Sample"
+	Sound.Music = require "SPI/#{currentSpi}/Sound/Music"
+	Sound.Sample = require "SPI/#{currentSpi}/Sound/Sample"
 
 	Service = require "SPI/#{currentSpi}/Sound/SoundService"
 	for key in Service

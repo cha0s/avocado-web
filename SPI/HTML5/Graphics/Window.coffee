@@ -1,8 +1,8 @@
 
-Dom = require 'core/Utility/Dom'
-EventEmitter = require 'core/Utility/EventEmitter'
-Mixin = require 'core/Utility/Mixin'
-Rectangle = require 'core/Extension/Rectangle'
+Dom = require 'Utility/Dom'
+EventEmitter = require 'Utility/EventEmitter'
+Mixin = require 'Utility/Mixin'
+Rectangle = require 'Extension/Rectangle'
 
 keyCodeMap = (keyCode) ->
 	
@@ -153,10 +153,7 @@ Window = module.exports = class
 		@mouseButtonDowns_ = []
 		@mouseButtonUps_ = []
 		
-		@setUpKeyCodeMap()
 		@setUpKeyEventHandlers()
-		
-		@setUpMouseButtonMap()
 		@setUpMouseEventHandlers()
 	
 	setUpKeyEventHandlers: ->

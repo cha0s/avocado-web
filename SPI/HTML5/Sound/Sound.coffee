@@ -1,6 +1,5 @@
 
-CoreService = require 'main/web/Bindings/CoreService'
-upon = require 'core/Utility/upon'
+upon = require 'Utility/upon'
 
 Sounds = {}
 module.exports = class
@@ -10,6 +9,8 @@ module.exports = class
 		@URI = ''
 		
 	@load: (uri) ->
+		
+		CoreService = require('Core').CoreService
 	
 		defer = upon.defer()
 		
