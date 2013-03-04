@@ -62,31 +62,23 @@ module.exports = AvoImage = class
 			
 		defer.promise
 	
-	rgbToHex = (r, g, b, a) ->
-	
-		if a?
-			"rgba(#{r}, #{g}, #{b}, #{a})"
-		else
-			"rgb(#{r}, #{g}, #{b})"
+	rgbToHex = (r, g, b) -> "rgb(#{r}, #{g}, #{b})"
 	
 	'%drawCircle': (position, radius, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
 		
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = a / 255
-		
 		context.beginPath();
 		context.arc position[0], position[1], radius, 0, 2*Math.PI
 		
-		context.fillStyle = rgbToHex r, g, b, a
+		oldAlpha = context.globalAlpha
+		context.globalAlpha = a / 255
+		
+		context.fillStyle = rgbToHex r, g, b
 		context.fill()
 		
-		context.strokeStyle = rgbToHex r, g, b, a
-		context.stroke()
-	
 		context.globalAlpha = oldAlpha
-	
+		
 	'%drawFilledBox': (box, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
@@ -96,9 +88,9 @@ module.exports = AvoImage = class
 			oldAlpha = context.globalAlpha
 			context.globalAlpha = a / 255
 			
-			context.fillStyle = rgbToHex r, g, b, a
+			context.fillStyle = rgbToHex r, g, b
 			context.fillRect box[0], box[1], box[2], box[3]
-			
+		
 			context.globalAlpha = oldAlpha
 		
 		else
@@ -113,9 +105,14 @@ module.exports = AvoImage = class
 		context.moveTo line[0], line[1]
 		context.lineTo line[2], line[3]
 		
-		context.fillStyle = rgbToHex r, g, b, a
+		oldAlpha = context.globalAlpha
+		context.globalAlpha = a / 255
+		
+		context.strokeStyle = rgbToHex r, g, b
 		context.stroke()
 	
+		context.globalAlpha = oldAlpha
+		
 	'%drawLineBox': (box, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
@@ -124,10 +121,9 @@ module.exports = AvoImage = class
 		context.globalAlpha = a / 255
 		
 		context.lineCap = 'butt';
-		context.fillStyle = context.strokeStyle = rgbToHex r, g, b, a
-		
+		context.fillStyle = context.strokeStyle = rgbToHex r, g, b
 		context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
-	
+		
 		context.globalAlpha = oldAlpha
 		
 	'%fill': (r, g, b, a) ->
@@ -140,7 +136,7 @@ module.exports = AvoImage = class
 			oldAlpha = context.globalAlpha
 			context.globalAlpha = a / 255
 			
-			context.fillStyle = rgbToHex r, g, b, a
+			context.fillStyle = rgbToHex r, g, b
 			context.fillRect 0, 0, @width(), @height()
 			
 			context.globalAlpha = oldAlpha
@@ -179,8 +175,6 @@ module.exports = AvoImage = class
 		sourceRect[2] = @width() if sourceRect[2] is 0
 		sourceRect[3] = @height() if sourceRect[3] is 0
 		
-		context.globalAlpha = alpha / 255
-		
 		sourceRect = Rectangle.round sourceRect
 		position = Vector.round position
 		
@@ -197,6 +191,9 @@ module.exports = AvoImage = class
 			sourceRect[3] += position[1]
 			position[1] = 0
 		
+		oldAlpha = context.globalAlpha
+		context.globalAlpha = alpha / 255
+		
 		if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
 		
 			context.drawImage(
@@ -212,37 +209,7 @@ module.exports = AvoImage = class
 				position[0], position[1], sourceRect[2], sourceRect[3]
 			)
 		
-		context.globalAlpha = 1.0
-	
-	'%renderGrayscale': (destination, amount, darken) ->
-		
-		d = @Canvas.getContext('2d').getImageData(0, 0, @width(), @height()).data
-		
-		context = destination.Canvas.getContext '2d'
-		imageData = context.getImageData 0, 0, @width(), @height()
-		e = imageData.data
-		w = @width()
-		
-		for y in [0...@height()]
-			for x in [0...@width()]
-		
-				i = (y * w + x) * 4
-				
-				r = d[i    ]
-				g = d[i + 1]
-				b = d[i + 2]
-	
-				grgb = darken * Math.min(
-					255.0
-					r * .3 + g * .59 + b * .11
-				)
-				
-				e[i    ] = r - (r - grgb) * amount
-				e[i + 1] = g - (g - grgb) * amount
-				e[i + 2] = b - (b - grgb) * amount
-				e[i + 3] = 255
-		
-		context.putImageData imageData, 0, 0
+		context.globalAlpha = oldAlpha
 	
 	'%setPixelAt': (x, y, c) ->
 		
