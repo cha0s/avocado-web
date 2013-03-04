@@ -181,14 +181,14 @@ module.exports = AvoImage = class
 		sourceRect[1] = 0 if sourceRect[1] < 0
 		
 		if position[0] < 0
-			if position[0] < -sourceRect[2]
+			if position[0] <= -sourceRect[2]
 				return
 			sourceRect[0] += -position[0]
 			sourceRect[2] += position[0]
 			position[0] = 0
 		
 		if position[1] < 0
-			if position[1] < -sourceRect[3]
+			if position[1] <= -sourceRect[3]
 				return
 			sourceRect[1] += -position[1]
 			sourceRect[3] += position[1]

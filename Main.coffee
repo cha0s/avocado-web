@@ -56,16 +56,11 @@ main.on 'stateInitialized', (name) ->
 
 # Log and exit on error.
 main.on 'error', (error) ->
-
-	message = if error.stack?
-		error.stack
-	else
-		error.toString()
-	console.error message
-	window.alert "Avocado died: #{message}!"
 	
 	main.quit()
 
+	throw error
+	
 # Close out services and stop running on quit.
 main.on 'quit', (code = 0) ->
 	
