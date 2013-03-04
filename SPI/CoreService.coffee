@@ -14,7 +14,4 @@ module.exports.implementSpi = (name) ->
 	for key in Service
 		@[key] = Service[key]
 	
-
-#module.exports.EnginePath = '/engine'
-module.exports.ResourcePath = '/resource'
-
+module.exports.ResourcePath = 'resource'
