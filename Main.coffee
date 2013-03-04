@@ -62,8 +62,9 @@ main.on 'error', (error) ->
 	else
 		error.toString()
 	console.error message
+	window.alert "Avocado died: #{message}!"
 	
-	main.quit 1
+	main.quit()
 
 # Close out services and stop running on quit.
 main.on 'quit', (code = 0) ->
