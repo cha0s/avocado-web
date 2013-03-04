@@ -1,4 +1,5 @@
 
+CoreService = require('Core').CoreService
 upon = require 'Utility/upon'
 
 Sounds = {}
@@ -10,8 +11,6 @@ module.exports = class
 		
 	@load: (uri) ->
 		
-		CoreService = require('Core').CoreService
-	
 		defer = upon.defer()
 		
 		s = {}

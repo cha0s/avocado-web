@@ -1,4 +1,5 @@
 
+CoreService = require('Core').CoreService
 Rectangle = require 'Extension/Rectangle'
 Vector = require 'Extension/Vector'
 upon = require 'Utility/upon'
@@ -20,8 +21,6 @@ module.exports = AvoImage = class
 			@Canvas.height = height
 	
 	@['%load'] = (uri, fn) ->
-		
-		CoreService = require('Core').CoreService
 		
 		defer = upon.defer()
 		

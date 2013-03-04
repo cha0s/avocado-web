@@ -1,6 +1,7 @@
 
 Dom = require 'Utility/Dom'
 EventEmitter = require 'Utility/EventEmitter'
+Image = require('Graphics').Image
 Mixin = require 'Utility/Mixin'
 Rectangle = require 'Extension/Rectangle'
 
@@ -223,8 +224,6 @@ Window = module.exports = class
 		@mouseButtonUps_ = []
 	
 	'%render': (image, rectangle) ->
-		
-		Image = require('Graphics').Image
 		
 		image.render(
 			Rectangle.position rectangle
