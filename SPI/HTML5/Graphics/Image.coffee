@@ -5,6 +5,10 @@ Vector = require 'Extension/Vector'
 upon = require 'Utility/upon'
 
 Images = {}
+
+# Why AvoImage and not Image, you may ask? Because (window.)Image is already
+# present in a browser environment, and it's easier for us to leave it alone,
+# since we need to instantiate one for each of our images.
 module.exports = AvoImage = class
 	
 	constructor: (width, height) ->
@@ -24,23 +28,23 @@ module.exports = AvoImage = class
 		
 		defer = upon.defer()
 		
-		i = new AvoImage()
+		image = new AvoImage()
 		
 		resolve = ->
 			
-			i.URI = uri
-			i.src = Images[uri].src
-			i.BrowserImage = Images[uri]
-			i.Canvas = document.createElement 'canvas'
+			image.URI = uri
+			image.src = Images[uri].src
+			image.BrowserImage = Images[uri]
+			image.Canvas = document.createElement 'canvas'
 			
-			i.Canvas.width = i.BrowserImage.width
-			i.Canvas.height = i.BrowserImage.height
+			image.Canvas.width = image.BrowserImage.width
+			image.Canvas.height = image.BrowserImage.height
 			
-			context = i.Canvas.getContext '2d'
-			context.drawImage i.BrowserImage, 0, 0
+			context = image.Canvas.getContext '2d'
+			context.drawImage image.BrowserImage, 0, 0
 			
-			defer.resolve i
-			fn i
+			defer.resolve image
+			fn image
 		
 		if Images[uri]?
 		
@@ -63,34 +67,36 @@ module.exports = AvoImage = class
 	
 	rgbToHex = (r, g, b) -> "rgb(#{r}, #{g}, #{b})"
 	
+	alphaContext = (context, alpha, callback) ->
+	
+		oldAlpha = context.globalAlpha
+		context.globalAlpha = alpha / 255
+		
+		callback()
+		
+		context.globalAlpha = oldAlpha
+		
 	'%drawCircle': (position, radius, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
-		
 		context.beginPath();
 		context.arc position[0], position[1], radius, 0, 2*Math.PI
-		
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = a / 255
-		
 		context.fillStyle = rgbToHex r, g, b
-		context.fill()
 		
-		context.globalAlpha = oldAlpha
+		alphaContext context, a, ->
+		
+			context.fill()
 		
 	'%drawFilledBox': (box, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
+		context.fillStyle = rgbToHex r, g, b
 		
 		if a > 0
 			
-			oldAlpha = context.globalAlpha
-			context.globalAlpha = a / 255
+			alphaContext context, a, ->
 			
-			context.fillStyle = rgbToHex r, g, b
-			context.fillRect box[0], box[1], box[2], box[3]
-		
-			context.globalAlpha = oldAlpha
+				context.fillRect box[0], box[1], box[2], box[3]
 		
 		else
 		
@@ -99,46 +105,36 @@ module.exports = AvoImage = class
 	'%drawLine': (line, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
-	
 		context.beginPath()
-		context.moveTo line[0], line[1]
+		context.moveTo line[0] + .5, line[1] + .5
 		context.lineTo line[2], line[3]
-		
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = a / 255
-		
 		context.strokeStyle = rgbToHex r, g, b
-		context.stroke()
-	
-		context.globalAlpha = oldAlpha
+		
+		alphaContext context, a, ->
+		
+			context.stroke()
 		
 	'%drawLineBox': (box, r, g, b, a, mode) ->
 		
 		context = @Canvas.getContext '2d'
-		
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = a / 255
-		
 		context.lineCap = 'butt';
 		context.fillStyle = context.strokeStyle = rgbToHex r, g, b
-		context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
 		
-		context.globalAlpha = oldAlpha
+		alphaContext context, a, ->
+		
+			context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
 		
 	'%fill': (r, g, b, a) ->
 		
 		context = @Canvas.getContext '2d'
+		context.fillStyle = rgbToHex r, g, b
 		
 		# HACK!
 		if a > 0
 			
-			oldAlpha = context.globalAlpha
-			context.globalAlpha = a / 255
+			alphaContext context, a, =>
 			
-			context.fillStyle = rgbToHex r, g, b
-			context.fillRect 0, 0, @width(), @height()
-			
-			context.globalAlpha = oldAlpha
+				context.fillRect 0, 0, @width(), @height()
 		
 		else
 			
@@ -169,7 +165,6 @@ module.exports = AvoImage = class
 		(data[i + 3] << 24) | (data[i] << 16) | (data[i + 1] << 8 ) | data[i + 2]
 	
 	'%render': (position, destination, alpha, mode, sourceRect) ->
-		context = destination.Canvas.getContext '2d'
 		
 		sourceRect[2] = @width() if sourceRect[2] is 0
 		sourceRect[3] = @height() if sourceRect[3] is 0
@@ -177,42 +172,34 @@ module.exports = AvoImage = class
 		sourceRect = Rectangle.round sourceRect
 		position = Vector.round position
 		
-		sourceRect[0] = 0 if sourceRect[0] < 0
-		sourceRect[1] = 0 if sourceRect[1] < 0
+		for i in [0..1]
+			if position[i] < 0
+				if position[i] <= -sourceRect[i + 2]
+					return
+				sourceRect[i] += -position[i]
+				sourceRect[i + 2] += position[i]
+				position[i] = 0
 		
-		if position[0] < 0
-			if position[0] <= -sourceRect[2]
-				return
-			sourceRect[0] += -position[0]
-			sourceRect[2] += position[0]
-			position[0] = 0
+		context = destination.Canvas.getContext '2d'
 		
-		if position[1] < 0
-			if position[1] <= -sourceRect[3]
-				return
-			sourceRect[1] += -position[1]
-			sourceRect[3] += position[1]
-			position[1] = 0
+		alphaContext context, alpha, =>
 		
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = alpha / 255
-		
-		if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
-		
-			context.drawImage(
-				@Canvas
-				position[0], position[1]
-			)
+			# Seems to be a faster execution path this way, so we'll take it
+			# if we can.
+			if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
+				
+				context.drawImage(
+					@Canvas
+					position[0], position[1]
+				)
+				
+			else
 			
-		else
-		
-			context.drawImage(
-				@Canvas
-				sourceRect[0], sourceRect[1], sourceRect[2], sourceRect[3]
-				position[0], position[1], sourceRect[2], sourceRect[3]
-			)
-			
-		context.globalAlpha = oldAlpha
+				context.drawImage(
+					@Canvas
+					sourceRect[0], sourceRect[1], sourceRect[2], sourceRect[3]
+					position[0], position[1], sourceRect[2], sourceRect[3]
+				)
 	
 	'%setPixelAt': (x, y, c) ->
 		
