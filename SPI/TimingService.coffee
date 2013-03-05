@@ -13,5 +13,5 @@ module.exports.implementSpi = (name) ->
 	Timing.Counter = require "SPI/#{currentSpi}/Timing/Counter"
 
 	Service = require "SPI/#{currentSpi}/Timing/TimingService"
-	for key in Service
+	for key of Service
 		@[key] = Service[key]

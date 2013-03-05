@@ -13,5 +13,5 @@ module.exports.implementSpi = (name) ->
 	Sound.Sample = require "SPI/#{currentSpi}/Sound/Sample"
 
 	Service = require "SPI/#{currentSpi}/Sound/SoundService"
-	for key in Service
+	for key of Service
 		@[key] = Service[key]

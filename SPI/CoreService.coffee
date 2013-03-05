@@ -11,7 +11,7 @@ module.exports.implementSpi = (name) ->
 	Core = require 'Core'
 	
 	Service = require "SPI/#{currentSpi}/Core/CoreService"
-	for key in Service
+	for key of Service
 		@[key] = Service[key]
 	
 module.exports.ResourcePath = 'resource'

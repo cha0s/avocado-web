@@ -14,5 +14,5 @@ module.exports.implementSpi = (name) ->
 	Graphics.Window = require "SPI/#{currentSpi}/Graphics/Window"
 
 	Service = require "SPI/#{currentSpi}/Graphics/GraphicsService"
-	for key in Service
+	for key of Service
 		@[key] = Service[key]
