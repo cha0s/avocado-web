@@ -28,6 +28,6 @@ CoreService['%readResource'] = (uri, fn) ->
 		request.onreadystatechange = ->
 			
 			if request.readyState is 4
-				fn resourceMap[uri] = request.responseText
+				fn null, resourceMap[uri] = request.responseText
 		
 		request.send()
