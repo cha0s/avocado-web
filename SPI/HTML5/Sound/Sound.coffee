@@ -9,7 +9,7 @@ module.exports = class
 		
 		@URI = ''
 		
-	@load: (uri) ->
+	@load: (uri, fn) ->
 		
 		defer = upon.defer()
 		
@@ -23,6 +23,11 @@ module.exports = class
 			s.URI = uri
 			
 			defer.resolve s
+			fn null, s
+		
+		reject = ->
+			
+			fn new Error "Couldn't load Sound: #{uri}"
 		
 		if Sounds[uri]?
 			
@@ -43,12 +48,13 @@ module.exports = class
 				new MediaElement audio, {
 					timerRate: 200
 					success: resolve
+					error: reject
 				}
 				
 			catch error
 				
 				Sounds[uri].media = null
-				Sounds[uri].error = error
+				fn error, null
 			
 			defer.then ->
 				
@@ -56,7 +62,7 @@ module.exports = class
 			
 			Sounds[uri].src = uri
 		
-		defer.promise
+		undefined
 	
 	playEnded = ->
 		

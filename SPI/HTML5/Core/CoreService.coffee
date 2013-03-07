@@ -28,6 +28,10 @@ CoreService['%readResource'] = (uri, fn) ->
 		request.onreadystatechange = ->
 			
 			if request.readyState is 4
-				fn null, resourceMap[uri] = request.responseText
+				
+				if request.status is 200
+					fn null, resourceMap[uri] = request.responseText
+				else
+					fn new Error "Couldn't load resouce: #{uri}"
 		
 		request.send()

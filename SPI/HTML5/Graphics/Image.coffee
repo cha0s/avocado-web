@@ -44,16 +44,24 @@ module.exports = AvoImage = class
 			context.drawImage image.BrowserImage, 0, 0
 			
 			defer.resolve image
-			fn image
+			fn null, image
+		
+		reject = ->
+			
+			fn new Error "Couldn't load Image: #{uri}"
 		
 		if Images[uri]?
 		
-			Images[uri].defer.then -> resolve()
+			Images[uri].defer.then(
+				-> resolve()
+				-> reject()
+			)
 			
 		else
 		
 			Images[uri] = new Image()
 			Images[uri].onload = resolve
+			Images[uri].onerror = reject
 			Images[uri].defer = upon.defer()
 			
 			defer.then -> Images[uri].defer.resolve()
@@ -63,7 +71,7 @@ module.exports = AvoImage = class
 			else
 				"data:image/png;base64,#{uri}"
 			
-		defer.promise
+		undefined
 	
 	rgbToHex = (r, g, b) -> "rgb(#{r}, #{g}, #{b})"
 	
