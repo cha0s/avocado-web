@@ -2,13 +2,13 @@ path = require 'path'
 
 module.exports = (grunt) ->
 
-	sourceDirectories = [
+	coffees = [
 		'SPI/**/*.coffee'
 		'Initialize.coffee'
 		'Main.coffee'
 	]
 	
-	sourceMapping = grunt.file.expandMapping sourceDirectories, 'js/scripts/',
+	coffeeMapping = grunt.file.expandMapping coffees, 'js/scripts/',
 		rename: (destBase, destPath) ->
 			destBase + destPath.replace /\.coffee$/, ".js"
 	
@@ -17,8 +17,17 @@ module.exports = (grunt) ->
 		
 		coffee:
 			compile:
-				files: sourceMapping
+				files: coffeeMapping
 			
+		copy:
+			main:
+				files: [
+					src: [
+						'SPI/**/*.js'
+					]
+					dest: 'js/scripts'
+					expand: true
+				]
 		wrap:
 			modules:
 				src: ['js/scripts/**/*.js']
@@ -56,4 +65,4 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-wrap'
 	
-	grunt.registerTask 'default', ['coffee', 'wrap', 'concat']
+	grunt.registerTask 'default', ['coffee', 'copy', 'wrap', 'concat']

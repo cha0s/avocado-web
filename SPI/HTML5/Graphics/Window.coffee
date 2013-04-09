@@ -1,6 +1,7 @@
 
 Dom = require 'Utility/Dom'
 EventEmitter = require 'Utility/EventEmitter'
+Graphics = require 'Graphics'
 Image = require('Graphics').Image
 Mixin = require 'Utility/Mixin'
 Rectangle = require 'Extension/Rectangle'
@@ -11,7 +12,7 @@ Window = module.exports = class
 		
 		Mixin this, EventEmitter
 		
-		@Canvas = document.createElement 'canvas'
+		@Canvas = Graphics.newCanvas()
 		@Canvas.setAttribute 'tabIndex', 1
 		
 		@Canvas.onkeydown = (event) =>

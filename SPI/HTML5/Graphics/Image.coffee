@@ -1,5 +1,6 @@
 
 CoreService = require('Core').CoreService
+Graphics = require 'Graphics'
 Rectangle = require 'Extension/Rectangle'
 Vector = require 'Extension/Vector'
 upon = require 'Utility/upon'
@@ -9,13 +10,14 @@ Images = {}
 # Why AvoImage and not Image, you may ask? Because (window.)Image is already
 # present in a browser environment, and it's easier for us to leave it alone,
 # since we need to instantiate one for each of our images.
+
 module.exports = AvoImage = class
 	
 	constructor: (width, height) ->
 
 		@URI = ''
 		@Pixels = null
-		@Canvas = document.createElement 'canvas'
+		@Canvas = Graphics.newCanvas()
 		
 		if width?
 			
@@ -35,12 +37,12 @@ module.exports = AvoImage = class
 			image.URI = uri
 			image.src = Images[uri].src
 			image.BrowserImage = Images[uri]
-			image.Canvas = document.createElement 'canvas'
+			image.Canvas = Graphics.newCanvas()
 			
 			image.Canvas.width = image.BrowserImage.width
 			image.Canvas.height = image.BrowserImage.height
 			
-			context = image.Canvas.getContext '2d'
+			context = Graphics.contextFromCanvas image.Canvas
 			context.drawImage image.BrowserImage, 0, 0
 			
 			defer.resolve image
@@ -86,7 +88,7 @@ module.exports = AvoImage = class
 		
 	'%drawCircle': (position, radius, r, g, b, a, mode) ->
 		
-		context = @Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas @Canvas
 		context.beginPath();
 		context.arc position[0], position[1], radius, 0, 2*Math.PI
 		context.fillStyle = rgbToHex r, g, b
@@ -97,7 +99,7 @@ module.exports = AvoImage = class
 		
 	'%drawFilledBox': (box, r, g, b, a, mode) ->
 		
-		context = @Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas @Canvas
 		context.fillStyle = rgbToHex r, g, b
 		
 		if a > 0
@@ -112,7 +114,7 @@ module.exports = AvoImage = class
 			
 	'%drawLine': (line, r, g, b, a, mode) ->
 		
-		context = @Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas @Canvas
 		context.beginPath()
 		context.moveTo line[0] + .5, line[1] + .5
 		context.lineTo line[2], line[3]
@@ -124,7 +126,7 @@ module.exports = AvoImage = class
 		
 	'%drawLineBox': (box, r, g, b, a, mode) ->
 		
-		context = @Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas @Canvas
 		context.lineCap = 'butt';
 		context.fillStyle = context.strokeStyle = rgbToHex r, g, b
 		
@@ -134,7 +136,7 @@ module.exports = AvoImage = class
 		
 	'%fill': (r, g, b, a) ->
 		
-		context = @Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas @Canvas
 		context.fillStyle = rgbToHex r, g, b
 		
 		# HACK!
@@ -156,7 +158,8 @@ module.exports = AvoImage = class
 		
 		unless @Pixels?
 			
-			@Pixels = @Canvas.getContext('2d').getImageData 0, 0, @width(), @height()
+			context = Graphics.contextFromCanvas @Canvas
+			@Pixels = context.getImageData 0, 0, @width(), @height()
 	
 	'%pixelAt': (x, y) ->
 		
@@ -167,7 +170,8 @@ module.exports = AvoImage = class
 			
 		else
 			
-			data = @Canvas.getContext('2d').getImageData(x, y, 1, 1).data
+			context = Graphics.contextFromCanvas @Canvas
+			data = context.getImageData(x, y, 1, 1).data
 			i = 0
 		
 		(data[i + 3] << 24) | (data[i] << 16) | (data[i + 1] << 8 ) | data[i + 2]
@@ -188,10 +192,10 @@ module.exports = AvoImage = class
 				sourceRect[i + 2] += position[i]
 				position[i] = 0
 		
-		context = destination.Canvas.getContext '2d'
+		context = Graphics.contextFromCanvas destination.Canvas
 		
 		alphaContext context, alpha, =>
-		
+			
 			# Seems to be a faster execution path this way, so we'll take it
 			# if we can.
 			if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
@@ -220,7 +224,8 @@ module.exports = AvoImage = class
 			
 		else
 			
-			imageData = @Canvas.getContext('2d').createImageData 1, 1
+			context = Graphics.contextFromCanvas @Canvas
+			imageData = context.createImageData 1, 1
 			i = 0
 		
 		imageData.data[i    ] = (c >>> 16) & 255
@@ -230,13 +235,15 @@ module.exports = AvoImage = class
 		
 		unless @Pixels?
 			
-			@Canvas.getContext('2d').putImageData imageData, x, y
+			context = Graphics.contextFromCanvas @Canvas
+			context.putImageData imageData, x, y
 	
 	'%unlockPixels': ->
 		
 		if @Pixels?
 			
-			@Canvas.getContext('2d').putImageData @Pixels, 0, 0
+			context = Graphics.contextFromCanvas @Canvas
+			context.putImageData @Pixels, 0, 0
 			@Pixels = null
 	
 	'%uri': -> @URI
