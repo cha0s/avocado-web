@@ -29,6 +29,12 @@ Timing.rendersPerSecondTarget = Config.rendersPerSecondTarget
 
 # SPI proxies.
 require 'proxySpiis'
+
+Debug = require 'Debug'
+Q = require 'Utility/Q'
+
+Q.stopUnhandledRejectionTracking()
+
 timeCounter = new Timing.Counter()
 
 Main = class extends (require 'Main')
@@ -54,12 +60,16 @@ main.on 'stateInitialized', (name) ->
 		document.body.appendChild Graphics.window.window_.Canvas
 		Graphics.window.window_.calculateOffset()
 
-# Log and exit on error.
-main.on 'error', (error) ->
-	
-	main.quit()
+quit = (error) ->
 
-	throw error
+	console.log error
+	main.quit()
+	
+# Log and exit on error.
+main.on 'error', quit
+window.onerror = (message, filename, lineNumber) ->
+	quit new Error message, filename, lineNumber
+	true
 	
 # Close out services and stop running on quit.
 main.on 'quit', (code = 0) ->
@@ -71,5 +81,6 @@ main.on 'quit', (code = 0) ->
 	
 	# Browser-specific stuff?
 
-# GO!	
+# GO!
+
 main.begin()

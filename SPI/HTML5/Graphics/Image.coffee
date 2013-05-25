@@ -1,9 +1,9 @@
 
 CoreService = require('Core').CoreService
 Graphics = require 'Graphics'
+Q = require 'Utility/Q'
 Rectangle = require 'Extension/Rectangle'
 Vector = require 'Extension/Vector'
-upon = require 'Utility/upon'
 
 Images = {}
 
@@ -28,8 +28,6 @@ module.exports = AvoImage = class
 	
 	@['%load'] = (uri, fn) ->
 		
-		defer = upon.defer()
-		
 		image = new AvoImage()
 		
 		resolve = ->
@@ -45,28 +43,33 @@ module.exports = AvoImage = class
 			context = Graphics.contextFromCanvas image.Canvas
 			context.drawImage image.BrowserImage, 0, 0
 			
-			defer.resolve image
 			fn null, image
 		
-		reject = ->
-			
-			fn new Error "Couldn't load Image: #{uri}"
+		reject = -> fn new Error "Couldn't load Image: #{uri}"
 		
 		if Images[uri]?
 		
-			Images[uri].defer.then(
+			Images[uri].defer.promise.then(
 				-> resolve()
 				-> reject()
-			)
+			).done()
 			
 		else
 		
-			Images[uri] = new Image()
-			Images[uri].onload = resolve
-			Images[uri].onerror = reject
-			Images[uri].defer = upon.defer()
+			defer = Q.defer()
 			
-			defer.then -> Images[uri].defer.resolve()
+			Images[uri] = new Image()
+			Images[uri].onload = ->
+				
+				resolve()
+				defer.resolve()
+				
+			Images[uri].onerror = reject
+			Images[uri].defer = Q.defer()
+			
+			defer.promise.then(
+				-> Images[uri].defer.resolve()
+			).done()
 			
 			Images[uri].src = if uri.match /\./
 				"#{CoreService.ResourcePath}#{uri}"

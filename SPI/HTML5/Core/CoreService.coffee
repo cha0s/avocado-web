@@ -1,4 +1,3 @@
-upon = require 'Utility/upon'
 
 module.exports = CoreService = class
 	

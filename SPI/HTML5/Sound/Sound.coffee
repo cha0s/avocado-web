@@ -1,6 +1,6 @@
 
 CoreService = require('Core').CoreService
-upon = require 'Utility/upon'
+Q = require 'Utility/Q'
 
 Sounds = {}
 module.exports = class
@@ -10,6 +10,47 @@ module.exports = class
 		@URI = ''
 		
 	@load: (uri, fn) ->
+		
+		
+		if Sounds[uri]?
+			
+#			Sounds[uri].defer.then -> resolve Sounds[uri].media
+		
+		else
+		
+			audio = new Audio()
+			
+			audio.src = "#{CoreService.ResourcePath}#{uri}"
+			
+			Sounds[uri] = {}
+			Sounds[uri].Audio = audio
+			Sounds[uri].defer = upon.defer()
+			
+			try
+			
+				new MediaElement audio, {
+					timerRate: 200
+					success: resolve
+					error: reject
+				}
+				
+			catch error
+				
+				Sounds[uri].media = null
+				fn error, null
+			
+			defer.then ->
+				
+				Sounds[uri].defer.resolve()
+			
+			Sounds[uri].src = uri
+		
+		
+		
+		
+		
+		
+		
 		
 		defer = upon.defer()
 		

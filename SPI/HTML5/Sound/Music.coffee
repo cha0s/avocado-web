@@ -1,7 +1,7 @@
 
+Q = require 'Utility/Q'
 Sound = require 'SPI/HTML5/Sound/Sound'
 TimingService = require('Timing').TimingService
-upon = require 'Utility/upon'
 
 module.exports = class extends Sound
 

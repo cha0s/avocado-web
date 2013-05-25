@@ -1,6 +1,6 @@
 
 Sound = require 'SPI/HTML5/Sound/Sound'
-upon = require 'Utility/upon'
+Q = require 'Utility/Q'
 
 module.exports = class extends Sound
 	
