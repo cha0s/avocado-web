@@ -17,15 +17,7 @@ module.exports = AvoImage = class
 
 		@URI = ''
 		@Pixels = null
-		@Canvas = Graphics.newCanvas()
-		
-		if width?
 			
-			[width, height] = width if width instanceof Array
-		
-			@Canvas.width = width
-			@Canvas.height = height
-	
 	@['%load'] = (uri, fn) ->
 		
 		image = new AvoImage()
@@ -35,13 +27,6 @@ module.exports = AvoImage = class
 			image.URI = uri
 			image.src = Images[uri].src
 			image.BrowserImage = Images[uri]
-			image.Canvas = Graphics.newCanvas()
-			
-			image.Canvas.width = image.BrowserImage.width
-			image.Canvas.height = image.BrowserImage.height
-			
-			context = Graphics.contextFromCanvas image.Canvas
-			context.drawImage image.BrowserImage, 0, 0
 			
 			fn null, image
 		
@@ -89,95 +74,9 @@ module.exports = AvoImage = class
 		
 		context.globalAlpha = oldAlpha
 		
-	'%drawCircle': (position, radius, r, g, b, a, mode) ->
-		
-		context = Graphics.contextFromCanvas @Canvas
-		context.beginPath();
-		context.arc position[0], position[1], radius, 0, 2*Math.PI
-		context.fillStyle = rgbToHex r, g, b
-		
-		alphaContext context, a, ->
-		
-			context.fill()
-		
-	'%drawFilledBox': (box, r, g, b, a, mode) ->
-		
-		context = Graphics.contextFromCanvas @Canvas
-		context.fillStyle = rgbToHex r, g, b
-		
-		if a > 0
-			
-			alphaContext context, a, ->
-			
-				context.fillRect box[0], box[1], box[2], box[3]
-		
-		else
-		
-			context.clearRect box[0], box[1], box[2], box[3]
-			
-	'%drawLine': (line, r, g, b, a, mode) ->
-		
-		context = Graphics.contextFromCanvas @Canvas
-		context.beginPath()
-		context.moveTo line[0] + .5, line[1] + .5
-		context.lineTo line[2], line[3]
-		context.strokeStyle = rgbToHex r, g, b
-		
-		alphaContext context, a, ->
-		
-			context.stroke()
-		
-	'%drawLineBox': (box, r, g, b, a, mode) ->
-		
-		context = Graphics.contextFromCanvas @Canvas
-		context.lineCap = 'butt';
-		context.fillStyle = context.strokeStyle = rgbToHex r, g, b
-		
-		alphaContext context, a, ->
-		
-			context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
-		
-	'%fill': (r, g, b, a) ->
-		
-		context = Graphics.contextFromCanvas @Canvas
-		context.fillStyle = rgbToHex r, g, b
-		
-		# HACK!
-		if a > 0
-			
-			alphaContext context, a, =>
-			
-				context.fillRect 0, 0, @width(), @height()
-		
-		else
-			
-			context.clearRect 0, 0, @width(), @height()
+	'%width': -> @Width ?= @BrowserImage.width
 	
-	'%width': -> @Canvas.width
-	
-	'%height': -> @Canvas.height
-	
-	'%lockPixels': ->
-		
-		unless @Pixels?
-			
-			context = Graphics.contextFromCanvas @Canvas
-			@Pixels = context.getImageData 0, 0, @width(), @height()
-	
-	'%pixelAt': (x, y) ->
-		
-		if @Pixels?
-		
-			data = @Pixels.data
-			i = (y * @width() + x) * 4
-			
-		else
-			
-			context = Graphics.contextFromCanvas @Canvas
-			data = context.getImageData(x, y, 1, 1).data
-			i = 0
-		
-		(data[i + 3] << 24) | (data[i] << 16) | (data[i + 1] << 8 ) | data[i + 2]
+	'%height': -> @Height ?= @BrowserImage.height
 	
 	'%render': (position, destination, alpha, mode, sourceRect) ->
 		
@@ -204,50 +103,16 @@ module.exports = AvoImage = class
 			if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
 				
 				context.drawImage(
-					@Canvas
+					@BrowserImage
 					position[0], position[1]
 				)
 				
 			else
 			
 				context.drawImage(
-					@Canvas
+					@BrowserImage
 					sourceRect[0], sourceRect[1], sourceRect[2], sourceRect[3]
 					position[0], position[1], sourceRect[2], sourceRect[3]
 				)
 	
-	'%setPixelAt': (x, y, c) ->
-		
-		return unless x >= 0 and y >= 0 and x < @width() and y < @height()
-	
-		if @Pixels?
-			
-			imageData = @Pixels
-			i = (y * @width() + x) * 4
-			
-		else
-			
-			context = Graphics.contextFromCanvas @Canvas
-			imageData = context.createImageData 1, 1
-			i = 0
-		
-		imageData.data[i    ] = (c >>> 16) & 255
-		imageData.data[i + 1] = (c >>> 8) & 255
-		imageData.data[i + 2] = c & 255
-		imageData.data[i + 3] = c >>> 24
-		
-		unless @Pixels?
-			
-			context = Graphics.contextFromCanvas @Canvas
-			context.putImageData imageData, x, y
-	
-	'%unlockPixels': ->
-		
-		if @Pixels?
-			
-			context = Graphics.contextFromCanvas @Canvas
-			context.putImageData @Pixels, 0, 0
-			@Pixels = null
-	
 	'%uri': -> @URI
-
