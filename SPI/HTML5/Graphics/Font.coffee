@@ -3,6 +3,7 @@ Graphics = require 'Graphics'
 
 CoreService = require('Core').CoreService
 Q = require 'Utility/Q'
+Vector = require 'Extension/Vector'
 
 module.exports = Font = class
 	
@@ -11,7 +12,7 @@ module.exports = Font = class
 		@Family = ''
 		@Size = 12
 	
-	textNode = (text, size) ->
+	textNode = (text, size, family) ->
 	
 		node = document.createElement 'span'
 		# Characters that vary significantly among different fonts
@@ -23,18 +24,17 @@ module.exports = Font = class
 		# Large font size makes even subtle changes obvious
 		node.style.fontSize      = "#{size}px"
 		# Reset any font properties
-		node.style.fontFamily    = 'sans-serif'
+		node.style.fontFamily    = family
 		node.style.fontVariant   = 'normal'
 		node.style.fontStyle     = 'normal'
 		node.style.fontWeight    = 'normal'
-		node.style.letterSpacing = '0'
 		
 		node
 	
 	# Adapted from http://stackoverflow.com/a/11689060
 	pollForLoadedFont = (family, fn) ->
 		
-		node = textNode 'giItT1WQy@!-/#', 300
+		node = textNode 'giItT1WQy@!-/#', 300, 'sans-serif'
 		
 		document.body.appendChild node
 		
@@ -86,13 +86,28 @@ module.exports = Font = class
 		
 	'%textHeight': (text) ->
 		
-		node = textNode text, @Size
-		node.clientHeight
+		node = textNode text, @Size, @Family
+		document.body.appendChild node
+		
+		height = node.offsetHeight
+		
+		node.parentNode.removeChild node
+		node = null
+		
+		height
+		
 		
 	'%textWidth': (text) ->
 		
-		node = textNode text, @Size
-		node.clientWidth
+		node = textNode text, @Size, @Family
+		document.body.appendChild node
+
+		width = node.offsetWidth
+		
+		node.parentNode.removeChild node
+		node = null
+		
+		width
 		
 	'%render': (position, text, destination, r, g, b, a, clip) ->
 		
@@ -104,7 +119,9 @@ module.exports = Font = class
 		context.strokeStyle = Graphics.rgbToHex 0, 0, 0
 		context.textBaseline = 'top'
 		
+		position = Vector.add position, [0, @Size / 4]
+		
 		Graphics.alphaContext context, a, ->
-			context.fillText text, position[0], position[1] + 5
-			context.strokeText text, position[0], position[1] + 5
+			context.fillText text, position[0], position[1]
+			context.strokeText text, position[0], position[1]
 			
