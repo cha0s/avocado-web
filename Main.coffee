@@ -51,7 +51,7 @@ Main = class extends (require 'Main')
 		
 		super
 		
-main = new Main
+window.main = new Main
 
 main.on 'stateInitialized', (name) ->
 	
