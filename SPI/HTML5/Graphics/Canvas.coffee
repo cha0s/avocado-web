@@ -22,36 +22,25 @@ module.exports = class
 			@Canvas.width = width
 			@Canvas.height = height
 	
-	rgbToHex = (r, g, b) -> "rgb(#{r}, #{g}, #{b})"
-	
-	alphaContext = (context, alpha, callback) ->
-	
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = alpha / 255
-		
-		callback()
-		
-		context.globalAlpha = oldAlpha
-		
 	'%drawCircle': (position, radius, r, g, b, a, mode) ->
 		
 		context = Graphics.contextFromCanvas @Canvas
 		context.beginPath();
 		context.arc position[0], position[1], radius, 0, 2*Math.PI
-		context.fillStyle = rgbToHex r, g, b
+		context.fillStyle = Graphics.rgbToHex r, g, b
 		
-		alphaContext context, a, ->
+		Graphics.alphaContext context, a, ->
 		
 			context.fill()
 		
 	'%drawFilledBox': (box, r, g, b, a, mode) ->
 		
 		context = Graphics.contextFromCanvas @Canvas
-		context.fillStyle = rgbToHex r, g, b
+		context.fillStyle = Graphics.rgbToHex r, g, b
 		
 		if a > 0
 			
-			alphaContext context, a, ->
+			Graphics.alphaContext context, a, ->
 			
 				context.fillRect box[0], box[1], box[2], box[3]
 		
@@ -65,9 +54,9 @@ module.exports = class
 		context.beginPath()
 		context.moveTo line[0] + .5, line[1] + .5
 		context.lineTo line[2], line[3]
-		context.strokeStyle = rgbToHex r, g, b
+		context.strokeStyle = Graphics.rgbToHex r, g, b
 		
-		alphaContext context, a, ->
+		Graphics.alphaContext context, a, ->
 		
 			context.stroke()
 		
@@ -75,21 +64,21 @@ module.exports = class
 		
 		context = Graphics.contextFromCanvas @Canvas
 		context.lineCap = 'butt';
-		context.fillStyle = context.strokeStyle = rgbToHex r, g, b
+		context.fillStyle = context.strokeStyle = Graphics.rgbToHex r, g, b
 		
-		alphaContext context, a, ->
+		Graphics.alphaContext context, a, ->
 		
 			context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
 		
 	'%fill': (r, g, b, a) ->
 		
 		context = Graphics.contextFromCanvas @Canvas
-		context.fillStyle = rgbToHex r, g, b
+		context.fillStyle = Graphics.rgbToHex r, g, b
 		
 		# HACK!
 		if a > 0
 			
-			alphaContext context, a, =>
+			Graphics.alphaContext context, a, =>
 			
 				context.fillRect 0, 0, @width(), @height()
 		
@@ -141,7 +130,7 @@ module.exports = class
 		
 		context = Graphics.contextFromCanvas destination.Canvas
 		
-		alphaContext context, alpha, =>
+		Graphics.alphaContext context, alpha, =>
 			
 			# Seems to be a faster execution path this way, so we'll take it
 			# if we can.
