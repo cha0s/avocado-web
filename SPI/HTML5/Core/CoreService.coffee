@@ -1,4 +1,6 @@
 
+Q = require 'Utility/Q'
+
 module.exports = CoreService = class
 	
 	close: ->
@@ -9,7 +11,7 @@ CoreService['%writeStderr'] = ->
 
 resourceMap = {}
 CoreService['%readResource'] = (uri, fn) ->
-	
+
 	# This SUCKS, but I haven't thought out how to handle the dynamic SPIs in
 	# a more sensical manner. I am leaning towards implementing writeStderr and
 	# readResource as methods of the CoreService INSTANCE, instead of the 
@@ -18,7 +20,7 @@ CoreService['%readResource'] = (uri, fn) ->
 	
 	if resourceMap[uri]?
 		
-		fn resourceMap[uri]
+		fn null, resourceMap[uri]
 		
 	else 
 		
