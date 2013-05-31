@@ -61,8 +61,11 @@ module.exports = Font = class
 			deferred = Q.defer()
 			Fonts[uri] = deferred.promise
 			
+			parts = uri.split('/')
+			family = parts[parts.length - 1].replace /[^A-Za-z0-9_\-]/, '-'
+			
 			font = new Font()
-			font.Family = 'DroidSans'
+			font.Family = family
 		
 			fontStyle = document.createElement 'style'
 			fontStyle.appendChild document.createTextNode """
@@ -97,11 +100,11 @@ module.exports = Font = class
 		
 		context.font = "#{@Size}px #{@Family}"
 		context.fillStyle = Graphics.rgbToHex r, g, b
-		context.lineWidth = .1
+		context.lineWidth = .2
 		context.strokeStyle = Graphics.rgbToHex 0, 0, 0
 		context.textBaseline = 'top'
 		
 		Graphics.alphaContext context, a, ->
-			context.fillText text, position[0], position[1]
-			context.strokeText text, position[0], position[1]
+			context.fillText text, position[0], position[1] + 5
+			context.strokeText text, position[0], position[1] + 5
 			
