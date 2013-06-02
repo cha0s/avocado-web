@@ -28,7 +28,7 @@ module.exports = (grunt) ->
 			main:
 				files: [
 					src: [
-						'SPI/**/*.js'
+						'scripts/**/*.js'
 					]
 					dest: 'js/'
 					expand: true
@@ -52,7 +52,7 @@ module.exports = (grunt) ->
 		concat:
 			self:
 				src: [
-					'js/wrapped/js/scripts/SPI/**/*.js'
+					'js/wrapped/js/scripts/**/*.js'
 					'js/Initialize.js'
 					'js/Main.js'
 				]
