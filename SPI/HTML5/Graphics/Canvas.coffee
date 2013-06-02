@@ -63,7 +63,8 @@ module.exports = class
 	'%drawLineBox': (box, r, g, b, a, mode) ->
 		
 		context = Graphics.contextFromCanvas @Canvas
-		context.lineCap = 'butt';
+		context.lineCap = 'butt'
+		context.lineWidth = 1
 		context.fillStyle = context.strokeStyle = Graphics.rgbToHex r, g, b
 		
 		Graphics.alphaContext context, a, ->
