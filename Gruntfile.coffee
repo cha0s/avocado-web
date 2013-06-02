@@ -3,12 +3,12 @@ path = require 'path'
 module.exports = (grunt) ->
 
 	coffees = [
-		'SPI/**/*.coffee'
+		'scripts/**/*.coffee'
 		'Initialize.coffee'
 		'Main.coffee'
 	]
 	
-	sourceMapping = grunt.file.expandMapping coffees, 'js/scripts/',
+	sourceMapping = grunt.file.expandMapping coffees, 'js/',
 		rename: (destBase, destPath) ->
 			destBase + destPath.replace /\.coffee$/, ".js"
 	
@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 					src: [
 						'SPI/**/*.js'
 					]
-					dest: 'js/scripts'
+					dest: 'js/'
 					expand: true
 				]
 		wrap:
@@ -39,11 +39,10 @@ module.exports = (grunt) ->
 				dest: 'js/wrapped/'
 				wrapper: (filepath) ->
 					
-					unless filepath.match /^js\/scripts\/(Initialize|Main)\.js$/
-						moduleName = filepath.substr 11
-						dirname = path.dirname moduleName
-						extname = path.extname moduleName
-						moduleName = path.join dirname, path.basename moduleName, extname 
+					moduleName = filepath.substr 11
+					dirname = path.dirname moduleName
+					extname = path.extname moduleName
+					moduleName = path.join dirname, path.basename moduleName, extname 
 					
 					if moduleName?
 						["requires_['#{moduleName}'] = function(module, exports) {\n\n", '\n};\n']
@@ -54,8 +53,8 @@ module.exports = (grunt) ->
 			self:
 				src: [
 					'js/wrapped/js/scripts/SPI/**/*.js'
-					'js/scripts/Initialize.js'
-					'js/scripts/Main.js'
+					'js/Initialize.js'
+					'js/Main.js'
 				]
 				dest: 'avocado-web.js'
 		
@@ -69,11 +68,17 @@ module.exports = (grunt) ->
 		clean:
 			output: ['js']
 				
+		watch:
+			scripts:
+				files: coffees
+				tasks: 'default'
+
 	grunt.loadNpmTasks 'grunt-contrib-clean'
 	grunt.loadNpmTasks 'grunt-contrib-coffee'
 	grunt.loadNpmTasks 'grunt-contrib-concat'
 	grunt.loadNpmTasks 'grunt-contrib-copy'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
+	grunt.loadNpmTasks 'grunt-contrib-watch'
 	grunt.loadNpmTasks 'grunt-wrap'
 	
 	grunt.registerTask 'default', ['coffee', 'copy', 'wrap', 'concat', 'clean']
