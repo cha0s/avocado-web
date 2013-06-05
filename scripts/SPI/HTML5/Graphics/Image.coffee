@@ -78,41 +78,4 @@ module.exports = AvoImage = class
 	
 	'%height': -> @Height ?= @BrowserImage.height
 	
-	'%render': (position, destination, alpha, mode, sourceRect) ->
-		
-		sourceRect[2] = @width() if sourceRect[2] is 0
-		sourceRect[3] = @height() if sourceRect[3] is 0
-		
-		sourceRect = Rectangle.round sourceRect
-		position = Vector.round position
-		
-		for i in [0..1]
-			if position[i] < 0
-				if position[i] <= -sourceRect[i + 2]
-					return
-				sourceRect[i] += -position[i]
-				sourceRect[i + 2] += position[i]
-				position[i] = 0
-		
-		context = Graphics.contextFromCanvas destination.Canvas
-		
-		alphaContext context, alpha, =>
-			
-			# Seems to be a faster execution path this way, so we'll take it
-			# if we can.
-			if sourceRect[0] is 0 and sourceRect[1] is 0 and sourceRect[2] is @width() and sourceRect[3] is @height()
-				
-				context.drawImage(
-					@BrowserImage
-					position[0], position[1]
-				)
-				
-			else
-			
-				context.drawImage(
-					@BrowserImage
-					sourceRect[0], sourceRect[1], sourceRect[2], sourceRect[3]
-					position[0], position[1], sourceRect[2], sourceRect[3]
-				)
-	
 	'%uri': -> @URI

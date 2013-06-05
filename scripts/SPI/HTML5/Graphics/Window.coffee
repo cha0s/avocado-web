@@ -65,19 +65,6 @@ Window = module.exports = class
 	
 	'%pollEvents': ->
 		
-	'%render': (image, rectangle) ->
-		
-		image.render(
-			Rectangle.position rectangle
-			
-			# Duck typing FTW, since we have this.Canvas, this will Just Work.
-			this
-			
-			255
-			Image.DrawMode_Blend
-			rectangle
-		)
-		
 	'%setFlags': (flags) ->
 	
 	'%setSize': (size) -> [@Canvas.width, @Canvas.height] = size

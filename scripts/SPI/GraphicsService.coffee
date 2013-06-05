@@ -12,6 +12,7 @@ module.exports.implementSpi = (name) ->
 	Graphics.Canvas = require "SPI/#{currentSpi}/Graphics/Canvas"
 	Graphics.Font = require "SPI/#{currentSpi}/Graphics/Font"
 	Graphics.Image = require "SPI/#{currentSpi}/Graphics/Image"
+	Graphics.Sprite = require "SPI/#{currentSpi}/Graphics/Sprite"
 	Graphics.Window = require "SPI/#{currentSpi}/Graphics/Window"
 
 	Service = require "SPI/#{currentSpi}/Graphics/GraphicsService"
