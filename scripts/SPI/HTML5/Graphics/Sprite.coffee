@@ -37,12 +37,12 @@ module.exports = Sprite = class
 			position = @_position
 		
 		if @_angle
-			context.translate position[0], position[1]
+			context.translate position[0] + @_rotationOrientation[0], position[1] + @_rotationOrientation[1]
 			
 			# Degrees -> radians
 			context.rotate @_angle * 0.0174532925
 			
-			position = [0, 0]
+			position = [-@_rotationOrientation[0], -@_rotationOrientation[1]]
 			
 		if @_emptySourceRectangle
 		
@@ -87,7 +87,7 @@ module.exports = Sprite = class
 	'%setPosition': (position) ->
 		@_position = Vector.round position
 	
-	'%setRotation': (@_angle) ->
+	'%setRotation': (@_angle, @_rotationOrientation) ->
 	
 	'%setScale': (factorX, factorY) -> @_factor = [factorX, factorY]
 	
