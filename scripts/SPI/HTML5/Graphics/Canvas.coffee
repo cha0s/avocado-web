@@ -27,10 +27,19 @@ module.exports = class
 		context = Graphics.contextFromCanvas @Canvas
 		context.save()
 		
-		context.beginPath();
-		context.arc position[0], position[1], radius, 0, 2*Math.PI
 		context.fillStyle = Graphics.rgbToHex r, g, b
 		context.globalAlpha = a
+		context.lineWidth = 1
+		context.lineCap = 'butt'
+		
+		context.beginPath()
+		context.arc(
+			position[0]
+			position[1]
+			radius
+			0
+			2 * Math.PI
+		)
 		context.fill()
 			
 		context.restore()
@@ -40,17 +49,18 @@ module.exports = class
 		context = Graphics.contextFromCanvas @Canvas
 		context.save()
 		
-		context.fillStyle = Graphics.rgbToHex r, g, b
-		
 		if a > 0
 			
+			context.fillStyle = Graphics.rgbToHex r, g, b
 			context.globalAlpha = a
-			context.fillRect box[0] + .5, box[1] + .5, box[2], box[3]
-		
-		else
-		
-			context.clearRect box[0] + .5, box[1] + .5, box[2], box[3]
 			
+			context.fillRect(
+				.5 + box[0]
+				.5 + box[1]
+				box[2]
+				box[3]
+			)
+		
 		context.restore()
 			
 	'%drawLine': (line, r, g, b, a, mode) ->
@@ -58,12 +68,20 @@ module.exports = class
 		context = Graphics.contextFromCanvas @Canvas
 		context.save()
 
-		context.beginPath()
-		context.lineWidth = 1
-		context.moveTo line[0] + .5, line[1] + .5
-		context.lineTo line[2] + .5, line[3] + .5
 		context.strokeStyle = Graphics.rgbToHex r, g, b
 		context.globalAlpha = a
+		context.lineWidth = 1
+		context.lineCap = 'butt'
+		
+		context.beginPath()
+		context.moveTo(
+			.5 + line[0]
+			.5 + line[1]
+		)
+		context.lineTo(
+			.5 + line[2]
+			.5 + line[3]
+		)
 		context.stroke()
 		
 		context.restore()
@@ -73,11 +91,17 @@ module.exports = class
 		context = Graphics.contextFromCanvas @Canvas
 		context.save()
 
-		context.lineCap = 'butt'
-		context.lineWidth = 1
-		context.fillStyle = context.strokeStyle = Graphics.rgbToHex r, g, b
+		context.strokeStyle = Graphics.rgbToHex r, g, b
 		context.globalAlpha = a
-		context.strokeRect box[0] + .5, box[1] + .5, box[2], box[3]
+		context.lineWidth = 1
+		context.lineCap = 'butt'
+		
+		context.strokeRect(
+			.5 + box[0]
+			.5 + box[1]
+			box[2]
+			box[3]
+		)
 		
 		context.restore()
 			
