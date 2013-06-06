@@ -112,6 +112,7 @@ module.exports = Font = class
 	'%render': (position, text, destination, r, g, b, a, clip) ->
 		
 		context = Graphics.contextFromCanvas destination.Canvas
+		context.save()
 		
 		context.font = "#{@Size}px #{@Family}"
 		context.fillStyle = Graphics.rgbToHex r, g, b
@@ -119,9 +120,11 @@ module.exports = Font = class
 		context.strokeStyle = Graphics.rgbToHex 0, 0, 0
 		context.textBaseline = 'top'
 		
+		# Yuck!
 		position = Vector.add position, [0, @Size / 4]
 		
-		Graphics.alphaContext context, a, ->
-			context.fillText text, position[0], position[1]
-			context.strokeText text, position[0], position[1]
+		context.fillText text, position[0], position[1]
+		context.strokeText text, position[0], position[1]
+			
+		context.restore()
 			

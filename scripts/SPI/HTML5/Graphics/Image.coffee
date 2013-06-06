@@ -63,17 +63,6 @@ module.exports = AvoImage = class
 			
 		undefined
 	
-	rgbToHex = (r, g, b) -> "rgb(#{r}, #{g}, #{b})"
-	
-	alphaContext = (context, alpha, callback) ->
-	
-		oldAlpha = context.globalAlpha
-		context.globalAlpha = alpha / 255
-		
-		callback()
-		
-		context.globalAlpha = oldAlpha
-		
 	'%width': -> @Width ?= @BrowserImage.width
 	
 	'%height': -> @Height ?= @BrowserImage.height
