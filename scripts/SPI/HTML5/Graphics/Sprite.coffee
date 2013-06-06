@@ -24,7 +24,7 @@ module.exports = Sprite = class
 		
 		context.globalAlpha = @_alpha
 		
-		unless @_factor[0] is 0 and @_factor[1] is 0
+		unless @_factor[0] is 1 and @_factor[1] is 1
 		
 			context.scale @_factor[0], @_factor[1]
 			position = [
@@ -37,7 +37,21 @@ module.exports = Sprite = class
 			position = @_position
 		
 		if @_angle
-			context.translate position[0] + @_rotationOrientation[0], position[1] + @_rotationOrientation[1]
+			
+			orientation = [
+				@_rotationOrientation[0]
+				@_rotationOrientation[1]
+			]
+			
+			unless @_factor[0] is 1 and @_factor[1] is 1
+			
+				orientation[0] /= @_factor[0]
+				orientation[1] /= @_factor[1]
+				
+			context.translate(
+				position[0] + orientation[0]
+				position[1] + orientation[1]
+			)
 			
 			# Degrees -> radians
 			context.rotate @_angle * 0.0174532925
