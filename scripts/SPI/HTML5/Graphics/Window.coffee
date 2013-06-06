@@ -1,9 +1,9 @@
 
 Dom = require 'Utility/Dom'
-EventEmitter = require 'Utility/EventEmitter'
+EventEmitter = require 'Mixin/EventEmitter'
 Graphics = require 'Graphics'
 Image = require('Graphics').Image
-Mixin = require 'Utility/Mixin'
+Mixin = require 'Mixin/Mixin'
 Rectangle = require 'Extension/Rectangle'
 
 Window = module.exports = class
