@@ -59,8 +59,9 @@ module.exports = class
 		context.save()
 
 		context.beginPath()
+		context.lineWidth = 1
 		context.moveTo line[0] + .5, line[1] + .5
-		context.lineTo line[2], line[3]
+		context.lineTo line[2] + .5, line[3] + .5
 		context.strokeStyle = Graphics.rgbToHex r, g, b
 		context.globalAlpha = a
 		context.stroke()
