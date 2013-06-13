@@ -43,7 +43,7 @@ Main = class extends (require 'Main')
 		
 		super
 		
-		@stateChange = name: 'Initial', args: {}
+		@transitionToState 'Initial'
 	
 	tick: ->
 		
