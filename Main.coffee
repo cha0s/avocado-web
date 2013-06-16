@@ -36,6 +36,7 @@ Q = require 'Utility/Q'
 Q.stopUnhandledRejectionTracking()
 
 timeCounter = new Timing.Counter()
+originalTimestamp = timeCounter.current()
 
 Main = class extends (require 'Main')
 
@@ -47,7 +48,9 @@ Main = class extends (require 'Main')
 	
 	tick: ->
 		
-		Timing.TimingService.setElapsed timeCounter.current() / 1000
+		Timing.TimingService.setElapsed(
+			(timeCounter.current() - originalTimestamp) / 1000
+		)
 		
 		super
 		
