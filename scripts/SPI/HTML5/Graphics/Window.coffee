@@ -218,19 +218,19 @@ keyCodeMap = (keyCode) ->
 		when 13 then Window.KeyCode.Enter
 		when 27 then Window.KeyCode.Escape
 		when 32 then Window.KeyCode.Space
-		when 33 then Window.KeyCode.ExclamationMark
-		when 34 then Window.KeyCode.QuotationMark
-		when 35 then Window.KeyCode.NumberSign
-		when 36 then Window.KeyCode.DollarSign
-		when 37 then Window.KeyCode.PercentSign
-		when 38 then Window.KeyCode.Ampersand
-		when 39 then Window.KeyCode.Apostrophe
-		when 40 then Window.KeyCode.ParenthesisLeft
-		when 41 then Window.KeyCode.ParenthesisRight
-		when 42 then Window.KeyCode.Asterisk
-		when 43 then Window.KeyCode.Plus
+#		when 33 then Window.KeyCode.ExclamationMark
+#		when 34 then Window.KeyCode.QuotationMark
+#		when 35 then Window.KeyCode.NumberSign
+#		when 36 then Window.KeyCode.DollarSign
+#		when 37 then Window.KeyCode.PercentSign
+#		when 38 then Window.KeyCode.Ampersand
+		when 222 then Window.KeyCode.Apostrophe
+#		when 40 then Window.KeyCode.ParenthesisLeft
+#		when 41 then Window.KeyCode.ParenthesisRight
+#		when 42 then Window.KeyCode.Asterisk
+#		when 43 then Window.KeyCode.Plus
 		when 188 then Window.KeyCode.Comma
-		when 173 then Window.KeyCode.Dash
+		when 189 then Window.KeyCode.Dash
 		when 190 then Window.KeyCode.Period
 		when 191 then Window.KeyCode.Slash
 	
@@ -245,13 +245,13 @@ keyCodeMap = (keyCode) ->
 		when 56 then Window.KeyCode['8']
 		when 57 then Window.KeyCode['9']
 	
-		when 58 then Window.KeyCode.Colon
-		when 59 then Window.KeyCode.Semicolon
-		when 60 then Window.KeyCode.LessThan
+#		when 58 then Window.KeyCode.Colon
+		when 186 then Window.KeyCode.Semicolon
+#		when 60 then Window.KeyCode.LessThan
 		when 61 then Window.KeyCode.EqualsSign
-		when 62 then Window.KeyCode.GreaterThan
-		when 63 then Window.KeyCode.QuestionMark
-		when 64 then Window.KeyCode.At
+#		when 62 then Window.KeyCode.GreaterThan
+#		when 63 then Window.KeyCode.QuestionMark
+#		when 64 then Window.KeyCode.At
 	
 		when 65 then Window.KeyCode.A
 		when 66 then Window.KeyCode.B
@@ -283,17 +283,17 @@ keyCodeMap = (keyCode) ->
 		when 219 then Window.KeyCode.BracketLeft
 		when 220 then Window.KeyCode.Backslash
 		when 221 then Window.KeyCode.BracketRight
-		when 94 then Window.KeyCode.Caret
-		when 95 then Window.KeyCode.Underscore
+#		when 94 then Window.KeyCode.Caret
+#		when 95 then Window.KeyCode.Underscore
 		when 192 then Window.KeyCode.Backtick
 	
-		when 123 then Window.KeyCode.BraceLeft
+#		when 123 then Window.KeyCode.BraceLeft
 		
 		# Lowerwhen alphabet excluded...
 		
-		when 124 then Window.KeyCode.Pipe
-		when 125 then Window.KeyCode.BraceRight
-		when 126 then Window.KeyCode.Tilde
+#		when 124 then Window.KeyCode.Pipe
+#		when 125 then Window.KeyCode.BraceRight
+#		when 126 then Window.KeyCode.Tilde
 		when 46 then Window.KeyCode.Delete
 	
 		when 112 then Window.KeyCode.F1
