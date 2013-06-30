@@ -27,10 +27,13 @@ Timing.timingService = new Timing.TimingService()
 Timing.ticksPerSecondTarget = Config.ticksPerSecondTarget
 Timing.rendersPerSecondTarget = Config.rendersPerSecondTarget
 
-# SPI proxies.
+# Monkey patches & SPI proxies.
+require 'monkeyPatches'
 require 'proxySpiis'
 
+
 Debug = require 'Debug'
+Main = require 'Main'
 Q = require 'Utility/Q'
 
 Q.stopUnhandledRejectionTracking()
@@ -38,36 +41,26 @@ Q.stopUnhandledRejectionTracking()
 timeCounter = new Timing.Counter()
 originalTimestamp = timeCounter.current()
 
-Main = class extends (require 'Main')
+window.main = main = new Main()
 
-	constructor: ->
-		
-		super
-		
-		@transitionToState 'Initial'
+main.on 'beforeTick', ->
 	
-	tick: ->
-		
-		Timing.TimingService.setElapsed(
-			(timeCounter.current() - originalTimestamp) / 1000
-		)
-		
-		super
-		
-window.main = new Main
+	Timing.TimingService.setElapsed(
+		(timeCounter.current() - originalTimestamp) / 1000
+	)
 
 main.on 'stateInitialized', (name) ->
 	
 	if name is 'Initial'
 		
-		document.body.appendChild Graphics.window.window_.Canvas
-		Graphics.window.window_.calculateOffset()
+		document.body.appendChild Graphics.window.Canvas
+		Graphics.window.calculateOffset()
 
 quit = (error) ->
 
 	console.log error
 	main.quit()
-	
+
 # Log and exit on error.
 main.on 'error', quit
 window.onerror = (message, filename, lineNumber) ->
@@ -75,7 +68,7 @@ window.onerror = (message, filename, lineNumber) ->
 	true
 	
 # Close out services and stop running on quit.
-main.on 'quit', (code = 0) ->
+main.on 'quit', ->
 	
 	Sound.soundService.close()
 	Timing.timingService.close()
