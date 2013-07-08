@@ -25,12 +25,18 @@ module.exports = Sprite = class
 		context.globalAlpha = @_alpha
 		
 		unless @_factor[0] is 1 and @_factor[1] is 1
-		
-			context.scale @_factor[0], @_factor[1]
+			
+			context.scale(
+				if @_factor[0] is 0 then 0.0001 else @_factor[0]
+				if @_factor[1] is 0 then 0.0001 else @_factor[1]
+			)
+			
 			position = [
-				@_position[0] / @_factor[0]
-				@_position[1] / @_factor[1]
+				@_position[0]
+				@_position[1]
 			]
+			position[0] /= @_factor[0] if @_factor[0] isnt 0
+			position[1] /= @_factor[1] if @_factor[1] isnt 0
 			
 		else
 			
@@ -45,8 +51,8 @@ module.exports = Sprite = class
 			
 			unless @_factor[0] is 1 and @_factor[1] is 1
 			
-				orientation[0] /= @_factor[0]
-				orientation[1] /= @_factor[1]
+				orientation[0] /= @_factor[0] if @_factor[0] isnt 0
+				orientation[1] /= @_factor[1] if @_factor[1] isnt 0
 				
 			context.translate(
 				position[0] + orientation[0]
