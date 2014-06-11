@@ -4,8 +4,8 @@ module.exports = (grunt) ->
 
 	coffees = [
 		'scripts/**/*.coffee'
-		'Initialize.coffee'
-		'Main.coffee'
+		'bootstrap/*.coffee'
+		'main.coffee'
 	]
 	
 	sourceMapping = grunt.file.expandMapping coffees, 'js/',
@@ -37,24 +37,25 @@ module.exports = (grunt) ->
 			modules:
 				src: ['js/scripts/**/*.js']
 				dest: 'js/wrapped/'
-				wrapper: (filepath) ->
-					
-					moduleName = filepath.substr 11
-					dirname = path.dirname moduleName
-					extname = path.extname moduleName
-					moduleName = path.join dirname, path.basename moduleName, extname 
-					
-					if moduleName?
-						["requires_['#{moduleName}'] = function(module, exports) {\n\n", '\n};\n']
-					else
-						['', '']
+				options:
+					wrapper: (filepath) ->
+						
+						moduleName = filepath.substr 11
+						dirname = path.dirname moduleName
+						extname = path.extname moduleName
+						moduleName = path.join dirname, path.basename moduleName, extname 
+						
+						if moduleName?
+							["requires_['#{moduleName}'] = function(module, exports, require, __dirname, __filename) {\n\n", '\n};\n']
+						else
+							['', '']
 		
 		concat:
 			self:
 				src: [
-					'js/wrapped/js/scripts/**/*.js'
-					'js/Initialize.js'
-					'js/Main.js'
+					'js/wrapped/js/**/*.js'
+					'js/bootstrap/**/*.js'
+					'js/main.js'
 				]
 				dest: 'avocado-web.js'
 		

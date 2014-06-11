@@ -1,16 +1,15 @@
 
-Graphics = require 'Graphics'
+{CoreService} = require 'avo/core'
 
-CoreService = require('Core').CoreService
-Q = require 'Utility/Q'
-Vector = require 'Extension/Vector'
+Promise = require 'avo/vendor/bluebird'
+Vector = require 'avo/extension/vector'
 
-module.exports = Font = class
+module.exports = class Font
 	
 	constructor: ->
 		
-		@Family = ''
-		@Size = 12
+		@_family = ''
+		@_size = 12
 	
 	textNode = (text, size, family) ->
 	
@@ -58,35 +57,35 @@ module.exports = Font = class
 	@['%load'] = (uri, fn) ->
 		
 		unless Fonts[uri]?
-			deferred = Q.defer()
+			deferred = Promise.defer()
 			Fonts[uri] = deferred.promise
 			
 			parts = uri.split('/')
 			family = parts[parts.length - 1].replace /[^A-Za-z0-9_\-]/, '-'
 			
 			font = new Font()
-			font.Family = family
+			font._family = family
 		
 			fontStyle = document.createElement 'style'
 			fontStyle.appendChild document.createTextNode """
 @font-face {
-  font-family: "#{font.Family}";
+  font-family: "#{font._family}";
   src: url("#{CoreService.ResourcePath}#{uri}") format("truetype");
 }
 """
 			document.getElementsByTagName('head').item(0).appendChild fontStyle
 		
-			pollForLoadedFont font.Family, -> deferred.resolve font
+			pollForLoadedFont font._family, -> deferred.resolve font
 			
 		Fonts[uri].done (font) -> fn null, font
 
-	'%setSize': (@Size) ->
+	'%setSize': (@_size) ->
 		
-	'%setStyle': (@Style) ->
+	'%setStyle': (@_style) ->
 		
 	'%textHeight': (text) ->
 		
-		node = textNode text, @Size, @Family
+		node = textNode text, @_size, @_family
 		document.body.appendChild node
 		
 		height = node.offsetHeight
@@ -96,10 +95,9 @@ module.exports = Font = class
 		
 		height
 		
-		
 	'%textWidth': (text) ->
 		
-		node = textNode text, @Size, @Family
+		node = textNode text, @_size, @_family
 		document.body.appendChild node
 
 		width = node.offsetWidth
@@ -111,17 +109,17 @@ module.exports = Font = class
 		
 	'%render': (position, text, destination, r, g, b, a, clip) ->
 		
-		context = Graphics.contextFromCanvas destination.Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas destination.Canvas
 		context.save()
 		
-		context.font = "#{@Size}px #{@Family}"
-		context.fillStyle = Graphics.rgbToHex r, g, b
+		context.font = "#{@_size}px #{@_family}"
+		context.fillStyle = @_Graphics.graphicsService.rgbToHex r, g, b
 		context.lineWidth = .2
-		context.strokeStyle = Graphics.rgbToHex 0, 0, 0
+		context.strokeStyle = @_Graphics.graphicsService.rgbToHex 0, 0, 0
 		context.textBaseline = 'top'
 		
 		# Yuck!
-		position = Vector.add position, [0, @Size / 4]
+		position = Vector.add position, [0, @_size / 4]
 		
 		context.fillText text, position[0], position[1]
 		context.strokeText text, position[0], position[1]

@@ -1,36 +1,38 @@
 
-CoreService = require('Core').CoreService
-Graphics = require 'Graphics'
-Q = require 'Utility/Q'
-Rectangle = require 'Extension/Rectangle'
-Vector = require 'Extension/Vector'
+{CoreService} = require 'avo/core'
+
+Promise = require 'avo/vendor/bluebird'
+Rectangle = require 'avo/extension/rectangle'
+Vector = require 'avo/extension/vector'
 
 Images = {}
 
-module.exports = class
+module.exports = class Canvas
 	
 	constructor: (width, height) ->
 
-		@URI = ''
-		@Pixels = null
-		@Canvas = Graphics.newCanvas()
+		@_uri = ''
+		@_pixels = null
+		@_canvas = @_Graphics.graphicsService.newCanvas()
 		
 		if width?
 			
 			[width, height] = width if width instanceof Array
 		
-			@Canvas.width = width
-			@Canvas.height = height
+			@_canvas.width = width
+			@_canvas.height = height
 	
 	'%drawCircle': (position, radius, r, g, b, a, mode) ->
 		
-		context = Graphics.contextFromCanvas @Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 		context.save()
 		
-		context.fillStyle = Graphics.rgbToHex r, g, b
+		context.fillStyle = @_Graphics.graphicsService.rgbToHex r, g, b
 		context.globalAlpha = a
 		context.lineWidth = 1
 		context.lineCap = 'butt'
+		
+#		context.globalCompositeOperation = 'copy'
 		
 		context.beginPath()
 		context.arc(
@@ -46,29 +48,35 @@ module.exports = class
 		
 	'%drawFilledBox': (box, r, g, b, a, mode) ->
 		
-		context = Graphics.contextFromCanvas @Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 		context.save()
 		
-		if a > 0
-			
-			context.fillStyle = Graphics.rgbToHex r, g, b
-			context.globalAlpha = a
-			
-			context.fillRect(
+		if @_Graphics.GraphicsService.BlendMode_Replace is mode
+		
+			context.clearRect(
 				.5 + box[0]
 				.5 + box[1]
 				box[2]
 				box[3]
 			)
 		
+		context.fillStyle = @_Graphics.graphicsService.rgbToHex r, g, b
+		context.globalAlpha = a
+		context.fillRect(
+			.5 + box[0]
+			.5 + box[1]
+			box[2]
+			box[3]
+		)
+		
 		context.restore()
 			
 	'%drawLine': (line, r, g, b, a, mode) ->
 		
-		context = Graphics.contextFromCanvas @Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 		context.save()
 
-		context.strokeStyle = Graphics.rgbToHex r, g, b
+		context.strokeStyle = @_Graphics.graphicsService.rgbToHex r, g, b
 		context.globalAlpha = a
 		context.lineWidth = 1
 		context.lineCap = 'butt'
@@ -88,10 +96,10 @@ module.exports = class
 			
 	'%drawLineBox': (box, r, g, b, a, mode) ->
 		
-		context = Graphics.contextFromCanvas @Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 		context.save()
 
-		context.strokeStyle = Graphics.rgbToHex r, g, b
+		context.strokeStyle = @_Graphics.graphicsService.rgbToHex r, g, b
 		context.globalAlpha = a
 		context.lineWidth = 1
 		context.lineCap = 'butt'
@@ -107,10 +115,10 @@ module.exports = class
 			
 	'%fill': (r, g, b, a) ->
 		
-		context = Graphics.contextFromCanvas @Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 		context.save()
 
-		context.fillStyle = Graphics.rgbToHex r, g, b
+		context.fillStyle = @_Graphics.graphicsService.rgbToHex r, g, b
 		
 		if a > 0
 			
@@ -123,27 +131,27 @@ module.exports = class
 	
 		context.restore()
 			
-	'%width': -> @Canvas.width
+	'%width': -> @_canvas.width
 	
-	'%height': -> @Canvas.height
+	'%height': -> @_canvas.height
 	
 	'%lockPixels': ->
 		
-		unless @Pixels?
+		unless @_pixels?
 			
-			context = Graphics.contextFromCanvas @Canvas
-			@Pixels = context.getImageData 0, 0, @width(), @height()
+			context = @_Graphics.graphicsService.contextFromCanvas @_canvas
+			@_pixels = context.getImageData 0, 0, @width(), @height()
 	
 	'%pixelAt': (x, y) ->
 		
-		if @Pixels?
+		if @_pixels?
 		
-			data = @Pixels.data
+			data = @_pixels.data
 			i = (y * @width() + x) * 4
 			
 		else
 			
-			context = Graphics.contextFromCanvas @Canvas
+			context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 			data = context.getImageData(x, y, 1, 1).data
 			i = 0
 		
@@ -153,14 +161,14 @@ module.exports = class
 		
 		return unless x >= 0 and y >= 0 and x < @width() and y < @height()
 	
-		if @Pixels?
+		if @_pixels?
 			
-			imageData = @Pixels
+			imageData = @_pixels
 			i = (y * @width() + x) * 4
 			
 		else
 			
-			context = Graphics.contextFromCanvas @Canvas
+			context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 			imageData = context.createImageData 1, 1
 			i = 0
 		
@@ -169,17 +177,17 @@ module.exports = class
 		imageData.data[i + 2] = c & 255
 		imageData.data[i + 3] = c >>> 24
 		
-		unless @Pixels?
+		unless @_pixels?
 			
-			context = Graphics.contextFromCanvas @Canvas
+			context = @_Graphics.graphicsService.contextFromCanvas @_canvas
 			context.putImageData imageData, x, y
 	
 	'%unlockPixels': ->
 		
-		if @Pixels?
+		if @_pixels?
 			
-			context = Graphics.contextFromCanvas @Canvas
-			context.putImageData @Pixels, 0, 0
-			@Pixels = null
+			context = @_Graphics.graphicsService.contextFromCanvas @_canvas
+			context.putImageData @_pixels, 0, 0
+			@_pixels = null
 	
-	'%uri': -> @URI
+	'%uri': -> @_uri

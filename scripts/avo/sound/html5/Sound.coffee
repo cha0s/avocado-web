@@ -1,13 +1,14 @@
 
-CoreService = require('Core').CoreService
-Q = require 'Utility/Q'
+{CoreService} = require 'avo/core'
+
+Promise = require 'avo/vendor/bluebird'
 
 Sounds = {}
-module.exports = class
+module.exports = class Sound
 
 	constructor: ->
 		
-		@URI = ''
+		@_uri = ''
 		
 	@load: (uri, fn) ->
 		
@@ -61,7 +62,7 @@ module.exports = class
 			Sounds[uri].media = media
 			s.Media = media
 			s.Audio = Sounds[uri].Audio
-			s.URI = uri
+			s._uri = uri
 			
 			defer.resolve s
 			fn null, s

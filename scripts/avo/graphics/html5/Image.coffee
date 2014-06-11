@@ -1,9 +1,9 @@
 
-CoreService = require('Core').CoreService
-Graphics = require 'Graphics'
-Q = require 'Utility/Q'
-Rectangle = require 'Extension/Rectangle'
-Vector = require 'Extension/Vector'
+{CoreService} = require 'avo/core'
+
+Promise = require 'avo/vendor/bluebird'
+Rectangle = require 'avo/extension/rectangle'
+Vector = require 'avo/extension/vector'
 
 Images = {}
 
@@ -11,12 +11,12 @@ Images = {}
 # present in a browser environment, and it's easier for us to leave it alone,
 # since we need to instantiate one for each of our images.
 
-module.exports = AvoImage = class
+module.exports = class AvoImage
 	
 	constructor: (width, height) ->
 
-		@URI = ''
-		@Pixels = null
+		@_uri = ''
+		@_pixels = null
 			
 	@['%load'] = (uri, fn) ->
 		
@@ -24,9 +24,9 @@ module.exports = AvoImage = class
 		
 		resolve = ->
 			
-			image.URI = uri
-			image.src = Images[uri].src
-			image.BrowserImage = Images[uri]
+			image._uri = uri
+			image._src = Images[uri].src
+			image._browserImage = Images[uri]
 			
 			fn null, image
 		
@@ -41,7 +41,7 @@ module.exports = AvoImage = class
 			
 		else
 		
-			defer = Q.defer()
+			defer = Promise.defer()
 			
 			Images[uri] = new Image()
 			Images[uri].onload = ->
@@ -50,7 +50,7 @@ module.exports = AvoImage = class
 				defer.resolve()
 				
 			Images[uri].onerror = reject
-			Images[uri].defer = Q.defer()
+			Images[uri].defer = Promise.defer()
 			
 			defer.promise.then(
 				-> Images[uri].defer.resolve()
@@ -63,8 +63,8 @@ module.exports = AvoImage = class
 			
 		undefined
 	
-	'%width': -> @Width ?= @BrowserImage.width
+	'%width': -> @_width ?= @_browserImage.width
 	
-	'%height': -> @Height ?= @BrowserImage.height
+	'%height': -> @_height ?= @_browserImage.height
 	
-	'%uri': -> @URI
+	'%uri': -> @_uri

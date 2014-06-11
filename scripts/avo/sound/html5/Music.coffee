@@ -1,9 +1,10 @@
 
-Q = require 'Utility/Q'
-Sound = require 'SPI/HTML5/Sound/Sound'
-TimingService = require('Timing').TimingService
+{TimingService} = require 'avo/timing'
 
-module.exports = class extends Sound
+Promise = require 'avo/vendor/bluebird'
+Sound = require './Sound'
+
+module.exports = class Music extends Sound
 
 	@['%load'] = (uri, fn) ->
 		

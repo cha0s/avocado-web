@@ -1,8 +1,8 @@
 
-Sound = require 'SPI/HTML5/Sound/Sound'
-Q = require 'Utility/Q'
+Sound = require './Sound'
+Promise = require 'avo/vendor/bluebird'
 
-module.exports = class extends Sound
+module.exports = class Sample extends Sound
 	
 	@['%load'] = (uri, fn) ->
 		

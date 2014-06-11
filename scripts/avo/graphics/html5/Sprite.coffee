@@ -1,15 +1,13 @@
 
-Graphics = require 'Graphics'
+Rectangle = require 'avo/extension/rectangle'
+Vector = require 'avo/extension/vector'
 
-Rectangle = require 'Extension/Rectangle'
-Vector = require 'Extension/Vector'
-
-module.exports = Sprite = class
+module.exports = class Sprite
 	
 	constructor: ->
 		
 		@_alpha = 1
-		@_blendMode = Graphics.GraphicsService.BlendMode_Blend
+		@_blendMode = @_Graphics.GraphicsService.BlendMode_Blend
 		@_position = [0, 0]
 		@_angle = 0
 		@_factor = [1, 1]
@@ -18,7 +16,7 @@ module.exports = Sprite = class
 	
 	'%renderTo': (destination) ->
 	
-		context = Graphics.contextFromCanvas destination.Canvas
+		context = @_Graphics.graphicsService.contextFromCanvas destination._canvas
 		
 		context.save()
 		
@@ -82,17 +80,6 @@ module.exports = Sprite = class
 		
 		context.restore()
 		
-	_clipCoordinates: ->
-		
-		# Is this necessary, still?
-		for i in [0..1]
-			if @_position[i] < 0
-				if @_position[i] <= -@_sourceRect[i + 2]
-					return
-				@_sourceRect[i] -= @_position[i]
-				@_sourceRect[i + 2] += @_position[i]
-				@_position[i] = 0
-
 	_checkSourceRectangle: ->
 		
 		@_emptySourceRectangle = Rectangle.equals(
@@ -112,7 +99,7 @@ module.exports = Sprite = class
 	'%setScale': (factorX, factorY) -> @_factor = [factorX, factorY]
 	
 	'%setSource': (source) ->
-		@_source = source.BrowserImage ? source.Canvas
+		@_source = source._browserImage ? source._canvas
 		@_checkSourceRectangle()
 	
 	'%setSourceRectangle': (sourceRectangle) ->
